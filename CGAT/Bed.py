@@ -75,6 +75,14 @@ class Bed(object):
         return "\t".join((self.contig, str(self.start),
                           str(self.end)) + tuple(map(str, self.fields)))
 
+    def copy(self):
+        '''Returns a new bed object that is a copy of this one'''
+
+        new_entry = Bed()
+        new_entry.__dict__ = self.__dict__.copy()
+        return new_entry
+
+        
     def fromGTF(self, gff, is_gtf=False, name=None):
         """fill from gtf formatted entry."""
         self.contig, self.start, self.end = gff.contig, gff.start, gff.end
