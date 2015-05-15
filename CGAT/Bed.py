@@ -63,6 +63,8 @@ class Bed(object):
                      'blockSizes': 7,
                      'blockStarts': 8}
 
+    default_value = "."
+
     def __init__(self):
         '''empty constructor.'''
         self.contig = None
@@ -151,7 +153,20 @@ class Bed(object):
         return self.fields[self.map_key2field[key]]
 
     def __setitem__(self, key, value):
-        self.fields[self.map_key2field[key]] = value
+        try:
+            position = self.map_key2field[key]
+        except IndexError:
+            raise IndexError("Unknown key: %s" % s)
+
+        try:
+            self.fields[position] = value
+        except IndexError:
+
+            self.fields.extend([self.default_value]
+                               * (position - len(self.fields) + 1))
+
+            self.fields[position] = value
+            
 
     def __getattr__(self, key):
         try:
