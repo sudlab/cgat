@@ -63,6 +63,8 @@ class Bed(object):
                      'blockSizes': 7,
                      'blockStarts': 8}
 
+    default_value = "."
+
     def __init__(self):
         '''empty constructor.'''
         self.contig = None
@@ -75,6 +77,14 @@ class Bed(object):
         return "\t".join((self.contig, str(self.start),
                           str(self.end)) + tuple(map(str, self.fields)))
 
+    def copy(self):
+        '''Returns a new bed object that is a copy of this one'''
+
+        new_entry = Bed()
+        new_entry.__dict__ = self.__dict__.copy()
+        return new_entry
+
+        
     def fromGTF(self, gff, is_gtf=False, name=None):
         """fill from gtf formatted entry."""
         self.contig, self.start, self.end = gff.contig, gff.start, gff.end
@@ -143,7 +153,20 @@ class Bed(object):
         return self.fields[self.map_key2field[key]]
 
     def __setitem__(self, key, value):
-        self.fields[self.map_key2field[key]] = value
+        try:
+            position = self.map_key2field[key]
+        except IndexError:
+            raise IndexError("Unknown key: %s" % s)
+
+        try:
+            self.fields[position] = value
+        except IndexError:
+
+            self.fields.extend([self.default_value]
+                               * (position - len(self.fields) + 1))
+
+            self.fields[position] = value
+            
 
     def __getattr__(self, key):
         try:
