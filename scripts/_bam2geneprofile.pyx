@@ -131,7 +131,7 @@ class RangeCounterBAM(RangeCounter):
         cdef int pos
         cdef int length
 
-        cdef Samfile samfile
+        cdef AlignmentFile samfile
 
         for samfile in files:
 
@@ -228,7 +228,7 @@ class RangeCounterBAMShift(RangeCounterBAM):
 
         cdef int extend
         cdef int shift
-        cdef Samfile samfile
+        cdef AlignmentFile samfile
 
         for samfile, shift, extend in zip(files, self.shifts, self.extends):
 
@@ -297,7 +297,7 @@ class RangeCounterBAMMerge(RangeCounterBAM):
         cdef int pos
         cdef int length
 
-        cdef Samfile samfile
+        cdef AlignmentFile samfile
         cdef int min_insert_size = self.min_insert_size
         cdef int max_insert_size = self.max_insert_size
 
@@ -371,7 +371,7 @@ class RangeCounterBAMBaseAccuracy(RangeCounterBAM):
         cdef int pos
         cdef int length
         
-        cdef Samfile samfile
+        cdef AlignmentFile samfile
 
         for samfile in files:
 
