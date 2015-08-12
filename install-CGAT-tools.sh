@@ -248,7 +248,7 @@ if [ "$CONDA_INSTALL_TYPE" == "cgat-scripts" ] ; then
 
 else
 
-   conda create -q -n $CONDA_INSTALL_TYPE $CONDA_INSTALL_TYPE gcc=4.8.3 --override-channels --channel https://conda.binstar.org/cgat --channel defaults --channel https://conda.binstar.org/r --yes
+   conda create -q -n $CONDA_INSTALL_TYPE $CONDA_INSTALL_TYPE=0.2 gcc=4.8.3 --override-channels --channel https://conda.binstar.org/cgat --channel defaults --channel https://conda.binstar.org/r --yes
 
 fi
 
@@ -291,7 +291,7 @@ if [ "$OS" != "travis" ] ; then
          echo " Installation did not finish properly. "
          echo 
          echo " Please submit this issue via Git Hub: "
-         echo " https://github.com/CGATOxford/cgat/issue "
+         echo " https://github.com/CGATOxford/cgat/issues "
 	 echo
          echo " Debugging: "
          echo " CFLAGS: "$CFLAGS
@@ -311,7 +311,7 @@ if [ "$OS" != "travis" ] ; then
       echo " Installation did not finish properly. "
       echo
       echo " Please submit this issue via Git Hub: "
-      echo " https://github.com/CGATOxford/cgat/issue "
+      echo " https://github.com/CGATOxford/cgat/issues "
       echo
       echo " Debugging: "
       echo " CGAT_HOME: "$CGAT_HOME
@@ -463,7 +463,7 @@ if [ ! $? -eq 0 ] ; then
    echo " There was a problem updating the installation. "
    echo 
    echo " Please submit this issue via Git Hub: "
-   echo " https://github.com/CGATOxford/cgat/issue "
+   echo " https://github.com/CGATOxford/cgat/issues "
    echo 
 
 else 
