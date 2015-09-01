@@ -202,3 +202,73 @@ def count(filename):
         return subprocess.check_output(statement, shell=True)
     except subprocess.CalledProcessError:
         return 0
+
+
+class FastaWindow:
+
+    def __init__(self, name, seq, offset):
+
+        self.name = name
+        self.sequence = seq
+        self.offset = offset
+
+
+class BufferedIterator:
+    ''' For dealing with Fasta files whose records are too big to fit in memory.
+    returns a record in chunks. The size of chunks is determined by size. 
+    The sizes are only approximate: sequence is added a line at a time .If
+    overlap is set, then the chunks overlap. Each iteration returns a FastaWindow
+    object with the sequence, the name it came from and the offset from zero
+    to count the position from '''
+
+    def iterate(self,infile):
+
+        h = infile.readline()[:-1]
+
+        if not h:
+            raise StopIteration
+
+        # skip everything until first fasta entry starts
+        while h[0] != ">":
+            h = infile.readline()[:-1]
+            if not h:
+                raise StopIteration
+            continue
+
+        h = h[1:]
+        seq = ""
+        offset = 0
+
+        for line in infile:
+            
+            if line.startswith(comment):
+                continue
+
+            if line.startswith('>'):
+                yield FastaWindow(h, seq, offset)
+                h = line[1:-1]
+                offset = 0
+                seq = ""
+
+            seq += line[:-1]
+            
+            if len(seq) >= self.size:
+                yield FastaWindow(h, seq, offset)
+                offset = offset + len(seq) - self.overlap
+                seq = seq[-self.overlap:]
+                             
+        yield FastaWindow(h, seq, offset)
+
+    def __init__(self, infile, size, overlap):
+        self.size = size
+        self.overlap = overlap
+        self.mIterator = self.iterate(infile)
+
+    def __iter__(self):
+
+        return self
+
+    def __next__(self):
+
+        return self.mIterator.next()
+
