@@ -30,25 +30,26 @@ Sorting gene sets
 +++++++++++++++++
 
 ``sort``
+
    Sorts entries in gtf file by one or more fields
 
-      +-----------------+---------------------------------------+
-      | option          | order in which fields are sorted      |
-      +-----------------|---------------------------------------+
-      | gene            | gene_id, contig, start                |
-      +-----------------+---------------------------------------+
-      | gene+transcript | gene_id, transcript_id, contig, start |
-      +-----------------+---------------------------------------+
-      | contig+gene     | contig, gene_id, transcript_id, start |
-      +-----------------+---------------------------------------+
-      | transcript      | transcript_id, contig, start          |
-      +-----------------+---------------------------------------+
-      | position        | contig, start                         |
-      +-----------------+---------------------------------------+
-      | position+gene   | contig( gene_id, start )              |
-      +-----------------+---------------------------------------+
-      | gene+position   | gene_id, contig, start                |
-      +-----------------+---------------------------------------+
+   +-----------------+---------------------------------------+
+   | option          | order in which fields are sorted      |
+   +-----------------|---------------------------------------+
+   | gene            | gene_id, contig, start                |
+   +-----------------+---------------------------------------+
+   | gene+transcript | gene_id, transcript_id, contig, start |
+   +-----------------+---------------------------------------+
+   | contig+gene     | contig, gene_id, transcript_id, start |
+   +-----------------+---------------------------------------+
+   | transcript      | transcript_id, contig, start          |
+   +-----------------+---------------------------------------+
+   | position        | contig, start                         |
+   +-----------------+---------------------------------------+
+   | position+gene   | contig( gene_id, start )              |
+   +-----------------+---------------------------------------+
+   | gene+position   | gene_id, contig, start                |
+   +-----------------+---------------------------------------+
 
    N.B. position+gene sorts by gene_id, start, then subsequently sorts
    flattened gene lists by contig, start
@@ -251,7 +252,7 @@ The following example sorts the input gene set by gene
 ``method=intersect-transcripts`` that outputs genomic the genomic
 regions within a gene that is covered by all transcripts in a gene.
 Finally, the resultant transcripts are renamed with the pattern
-"MERGED_%i".
+"MERGED_%i"::
 
     cgat gtf2gtf
             --method=sort
@@ -353,7 +354,7 @@ def gene_to_blocks(gene):
     for i in range(len(exons)-1):
         entry.start = exons[i]
         entry.end = exons[i+1]
-        entry.attributes["exon_number"] = i + 1
+        entry.attributes["exon_id"] = str(i + 1)
         yield entry
 
 
@@ -996,7 +997,7 @@ def main(argv=None):
 
             if options.filename_filter:
 
-                ids, nerrors = IOTools.ReadList(
+                ids = IOTools.readList(
                     IOTools.openFile(options.filename_filter, "r"))
                 E.info("read %i ids" % len(ids))
 
@@ -1226,6 +1227,8 @@ def main(argv=None):
                 if options.duplicate_feature in ["both", "gene"]:
                     if gtf.gene_id in dup_gene:
                         gene_dict[gtf.gene_id] = gene_dict[gtf.gene_id] + 1
+                        # TS. patch until pysam.ctabixproxies.pyx bugfixed
+                        gtf.attributes = gtf.attributes.strip()
                         gtf.setAttribute('gene_id',
                                          gtf.gene_id + "." +
                                          str(gene_dict[gtf.gene_id]))
@@ -1234,6 +1237,8 @@ def main(argv=None):
                     if gtf.transcript_id in dup_transcript:
                         transcript_dict[gtf.transcript_id] = \
                             transcript_dict[gtf.transcript_id] + 1
+                        # TS. patch until pysam.ctabixproxies.pyx bugfixed
+                        gtf.attributes = gtf.attributes.strip()
                         gtf.setAttribute('transcript_id',
                                          gtf.transcript_id + "." +
                                          str(transcript_dict[gtf.transcript_id]))
