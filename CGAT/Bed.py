@@ -129,9 +129,8 @@ class Bed(object):
         new_entry.__dict__ = self.__dict__.copy()
         return new_entry
 
-        
     def fromGTF(self, gff, is_gtf=False, name=None):
-        """fill from gtf formatted entry.
+        """fill fields from gtf formatted entry
 
         Arguments
         ---------
@@ -242,7 +241,6 @@ class Bed(object):
 
             self.fields[position] = value
             
-
     def __getattr__(self, key):
         try:
             return self.fields[self.map_key2field[key]]
