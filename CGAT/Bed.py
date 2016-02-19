@@ -130,7 +130,7 @@ class Bed(object):
         return new_entry
 
     def fromGTF(self, gff, is_gtf=False, name=None):
-        """fill from gtf formatted entry.
+        """fill fields from gtf formatted entry
 
         Arguments
         ---------
