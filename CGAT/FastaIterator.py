@@ -203,6 +203,7 @@ def count(filename):
     except subprocess.CalledProcessError:
         return 0
 
+
 class FastaWindow:
 
     def __init__(self, name, seq, offset):

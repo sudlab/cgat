@@ -441,13 +441,13 @@ def extendInterval(iterator, contigs, distance):
         ninput += 1
 
         if bed.contig not in contigs:
-            nskipped_contig += 1
+            nskipped += 1
             continue
         if bed.start < 0 or bed.end < 0:
-            nskipped_range += 1
+            nskipped += 1
             continue
         if bed.end > contigs[bed.contig]:
-            nskipped_range += 1
+            nskipped += 1
             continue
 
         newstart = bed.start - distance
@@ -538,7 +538,7 @@ def main(argv=sys.argv):
                       help="bam-formatted filename with genome.")
 
     parser.add_option("--filter-names-file", dest="names", type="string",
-                       help="list of names to keep. One per line")
+                      help="list of names to keep. One per line")
 
     parser.set_defaults(methods=[],
                         merge_distance=0,
