@@ -218,8 +218,16 @@ def getNumReads(bamfile):
     nreads : int
         Number of reads
     '''
+    
+    bam_lines = pysam.idxstats(bamfile)
 
-    lines = pysam.idxstats(bamfile).splitlines()
+    lines = []
+
+    if isinstance(bam_lines, list):
+        lines = ''.join(bam_lines).splitlines()
+    else:
+        lines = bam_lines.splitlines()
+    
 
     try:
         nreads = sum(
