@@ -1,9 +1,6 @@
 """MAST.py - Parser for MAST files
 ==================================
 
-:Author: 
-:Release: $Id$
-:Date: |today|
 :Tags: Python
 
 As of biopython 1.5.6, the MAST parser is broken.
@@ -33,7 +30,7 @@ class Match:
     """a MAST entry.
     """
     header = "\t".join(("id", "description", "length", "pvalue", "evalue",
-                       "nmatches", "diagram", "start", "end", "positions", "motifs", "directions"))
+                        "nmatches", "diagram", "start", "end", "positions", "motifs", "directions"))
 
     def __init__(self):
         pass

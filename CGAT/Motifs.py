@@ -1,32 +1,7 @@
-##########################################################################
-#
-#   MRC FGU Computational Genomics Group
-#
-#   $Id$
-#
-#   Copyright (C) 2009 Andreas Heger
-#
-#   This program is free software; you can redistribute it and/or
-#   modify it under the terms of the GNU General Public License
-#   as published by the Free Software Foundation; either version 2
-#   of the License, or (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program; if not, write to the Free Software
-#   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-##########################################################################
 '''
 Motifs.py - 
 ======================================================
 
-:Author: Andreas Heger
-:Release: $Id$
-:Date: |today|
 :Tags: Python
 
 Code
@@ -47,7 +22,7 @@ def countMotifs(infile, motifs):
     positions = []
     while 1:
         try:
-            seq = it.next()
+            seq = next(it)
         except StopIteration:
             break
         if not seq:
@@ -105,7 +80,7 @@ iupacdict = {
     'X': 'ACGT',
     'N': 'ACGT'}
 
-regexdict = dict(((x[1], x[0]) for x in iupacdict.iteritems()))
+regexdict = dict(((x[1], x[0]) for x in iupacdict.items()))
 
 
 def iupac2regex(pattern):

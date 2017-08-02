@@ -1,32 +1,7 @@
-##########################################################################
-#
-#   MRC FGU Computational Genomics Group
-#
-#   $Id$
-#
-#   Copyright (C) 2009 Andreas Heger
-#
-#   This program is free software; you can redistribute it and/or
-#   modify it under the terms of the GNU General Public License
-#   as published by the Free Software Foundation; either version 2
-#   of the License, or (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program; if not, write to the Free Software
-#   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-##########################################################################
 '''
 MACS.py - Parser for MACS output
 ================================
 
-:Author: Andreas Heger
-:Release: $Id$
-:Date: |today|
 :Tags: Python
 
 The :mod:`Pipeline` module contains various utility functions
@@ -38,9 +13,11 @@ API
 '''
 
 import collections
-
 import math
+import csv
+
 import CGAT.CSV as CSV
+
 
 MacsPeak = collections.namedtuple(
     "MacsPeak", "contig start end length summit tags pvalue fold fdr")
@@ -107,7 +84,8 @@ def iterateMacs2Peaks(infile):
     from their -log10 values.
     '''
 
-    for row in CSV.DictReader(infile, dialect='excel-tab'):
+    for row in csv.DictReader(CSV.CommentStripper(infile),
+                              dialect='excel-tab'):
         # these are 1-based coordinates
         # macs can have negative start coordinates
         # start
@@ -122,5 +100,5 @@ def iterateMacs2Peaks(infile):
                  float(row['fold_enrichment']),
                  math.pow(10, -float(row['-log10(qvalue)'])),
                  row['name']))
-        except KeyError, msg:
+        except KeyError as msg:
             raise KeyError("%s: %s" % (msg, row))

@@ -2,9 +2,6 @@
 RateEstimation.py - utilities for computing rate estimates for codon models.
 =============================================================================
 
-:Author: 
-:Release: $Id$
-:Date: |today|
 :Tags: Python
 
 """
@@ -18,9 +15,6 @@ except ImportError:
     pass
 
 from CGAT import Genomics as Genomics
-# ------------------------------------------------------------------------
-# ------------------------------------------------------------------------
-# ------------------------------------------------------------------------
 
 
 def evaluateCodonPair(codon1, codon2):
@@ -44,8 +38,6 @@ def evaluateCodonPair(codon1, codon2):
 
     return True, is_synonymous, is_transition
 
-# -------------------------------------------------------------------
-
 
 def countSubstitutions(pi, Q):
     """count substitituions given a matrix Q and frequencies pi."""
@@ -53,7 +45,7 @@ def countSubstitutions(pi, Q):
     rI, rV, rS, rN = 0, 0, 0, 0
 
     codon_table = Bio.Data.CodonTable.standard_dna_table
-    codons = codon_table.forward_table.keys()
+    codons = list(codon_table.forward_table.keys())
 
     for codon_i in codons:
         for codon_j in codons:
@@ -77,8 +69,6 @@ def countSubstitutions(pi, Q):
 
     return rI, rV, rS, rN
 
-# -------------------------------------------------------------------
-
 
 def initializeQMatrix(codons):
     """get an initialized Q matrix."""
@@ -91,8 +81,6 @@ def initializeQMatrix(codons):
 
     return Q
 
-# -------------------------------------------------------------------
-
 
 def getQMatrix(pi, Rsi, Rsv, Rni, Rnv):
     """build a q matrix.
@@ -101,7 +89,7 @@ def getQMatrix(pi, Rsi, Rsv, Rni, Rnv):
     The matrix is normalized such that trace of the matrix is -1.
     """
 
-    codons = Bio.Data.CodonTable.standard_dna_table.forward_table.keys()
+    codons = list(Bio.Data.CodonTable.standard_dna_table.forward_table.keys())
 
     Q = initializeQMatrix(codons)
 
@@ -142,8 +130,6 @@ def getQMatrix(pi, Rsi, Rsv, Rni, Rnv):
 
     return Q, trace
 
-# --------------------------------------------------------------
-
 
 def getRateMatrix(trained_model, terminals=None):
     """return a rate matrix from an xrate grammar.
@@ -166,15 +152,15 @@ def getRateMatrix(trained_model, terminals=None):
         xpi = trained_model.evaluateTerminalFrequencies()[tt]
 
         pi = {}
-        for codon, f in xpi.items():
+        for codon, f in list(xpi.items()):
             pi["".join(codon).upper()] = f
 
         # retrieve the rate matrix for all codons
         xmatrix = trained_model.evaluateRateMatrix()[tt]
         matrix = {}
-        for codon1, v in xmatrix.items():
+        for codon1, v in list(xmatrix.items()):
             x = {}
-            for codon2, f in xmatrix[codon1].items():
+            for codon2, f in list(xmatrix[codon1].items()):
                 x["".join(codon2).upper()] = v
             matrix["".join(codon1).upper()] = x
 
@@ -185,10 +171,6 @@ def getRateMatrix(trained_model, terminals=None):
             matrices[tt] = matrix
 
     return pis, matrices
-
-# ------------------------------------------------------------------------
-# ------------------------------------------------------------------------
-# ------------------------------------------------------------------------
 
 
 def setFrequencies(model, mali, prefix=""):
@@ -202,7 +184,7 @@ def setFrequencies(model, mali, prefix=""):
 
     try:
         frequencies = Codons.getFrequenciesPerCodonPosition(
-            [x.mString for x in mali.values()])
+            [x.mString for x in list(mali.values())])
     except XGram.Exceptions.UsageError:
         return
 
@@ -223,7 +205,7 @@ def getDistanceGTR(pi, matrix):
     """obtain distance from a GTR model.
     see Felsenstein 1994, pp 209
     """
-    alphabet = pi.keys()
+    alphabet = list(pi.keys())
     Q = initializeQMatrix(alphabet)
 
     # fill matrix AtD and compute trace

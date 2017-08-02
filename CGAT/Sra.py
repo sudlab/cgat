@@ -1,25 +1,3 @@
-##########################################################################
-#
-#   MRC FGU Computational Genomics Group
-#
-#   $Id$
-#
-#   Copyright (C) 2009 Andreas Heger
-#
-#   This program is free software; you can redistribute it and/or
-#   modify it under the terms of the GNU General Public License
-#   as published by the Free Software Foundation; either version 2
-#   of the License, or (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program; if not, write to the Free Software
-#   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-##########################################################################
 '''
 Sra.py - Methods for dealing with short read archive files
 ==========================================================
@@ -43,6 +21,7 @@ import itertools
 import CGAT.Experiment as E
 import CGAT.Fastq as Fastq
 import CGAT.IOTools as IOTools
+from future.moves.urllib.request import urlopen
 
 
 def peek(sra, outdir=None):
@@ -64,7 +43,7 @@ def peek(sra, outdir=None):
         The quality score format in the :term:`fastq` formatted files.
 
     """
-    
+
     if outdir is None:
         workdir = tempfile.mkdtemp()
     else:
@@ -104,18 +83,23 @@ def peek(sra, outdir=None):
 
     # check format of fastqs in .sra
     fastq_format = Fastq.guessFormat(IOTools.openFile(f[0], "r"), raises=False)
+    fastq_datatype = Fastq.guessDataType(
+        IOTools.openFile(f[0], "r"), raises=True)
 
     if outdir is None:
         shutil.rmtree(workdir)
 
-    return f, fastq_format
+    return f, fastq_format, fastq_datatype
 
 
-def extract(sra, outdir):
-    """return statement for extracting the SRA file in `outdir`."""
+def extract(sra, outdir, tool="fastq-dump"):
+    """return statement for extracting the SRA file in `outdir`.
+    possible tools are fastq-dump and abi-dump. Use abi-dump for colorspace"""
 
-    statement = """fastq-dump --split-files --gzip -Q 33 --outdir
-                 %(outdir)s %(sra)s""" % locals()
+    if tool == "fastq-dump":
+        tool += " --split-files -Q33"
+
+    statement = """%(tool)s --gzip --outdir %(outdir)s %(sra)s""" % locals()
 
     return statement
 
@@ -141,7 +125,7 @@ def fetch_ENA(dl_path, outdir, protocol="ascp"):
         statement = """ascp -QT -l %%(aspera_bandwidth)s -i $ASCP_KEY_PATH
                        era-fasp@fasp.sra.ebi.ac.uk:/%(dl_path)s %(outdir)s """ % locals()
     elif protocol == "http":
-        fn = os.path.basename(era_path)
+        fn = os.path.basename(dl_path)
         outfile = os.path.join(outdir, fn)
         statement = "wget -O %(outfile)s ftp://ftp.sra.ebi.ac.uk:/%(dl_path)s" % locals()
 
@@ -156,9 +140,9 @@ def fetch_ENA_files(accession):
           % accession
 
     try:
-        paths = urllib2.urlopen(url).readlines()[1:]
+        paths = urlopen(url).readlines()[1:]
     except:
-        print "couldn't access %s" %url
+        E.debug("couldn't access %s" % url)
         raise
 
     paths = list(itertools.chain.from_iterable(
