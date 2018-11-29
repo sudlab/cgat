@@ -96,9 +96,15 @@ class MotifList:
 
             raise KeyError("%s not in list" % key)
 
-    def sort(self, key, *args, **kwargs):
+    def sort(self, key, order=None, *args, **kwargs):
 
-        self.motifs.sort(key=lambda motif: motif.__dict__[key],
+        if (order == "desc"):
+            self.motifs.sort(key=lambda motif: motif.__dict__[key], reverse=True,
+                             *args, **kwargs)
+
+        else:
+
+            self.motifs.sort(key=lambda motif: motif.__dict__[key],
                          *args, **kwargs)
 
     def append(self, motif):
@@ -144,7 +150,7 @@ class MemeMotifFile(MotifList):
     header = None
     motif_line_re = re.compile("^MOTIF")
     matrix_line_re = re.compile(
-        "letter-probability matrix: .+w=\s?([0-9]+).+E=\s?(.+)")
+        "letter-probability matrix: .+w=\s?([0-9]+).+(E=\s?(.+))*")
 
     def __init__(self, buffer_or_Motiffile):
         
